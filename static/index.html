@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exid VPN - Private Activation</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --success: #22c55e;
+            --error: #ef4444;
+            --bg: #0f0f1a;
+            --card-bg: #1a1a2e;
+            --text: #ffffff;
+            --text-muted: #a0a0b0;
+            --border: #2a2a3e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 480px;
+            width: 100%;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 32px;
+            border: 1px solid var(--border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .privacy-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .payment-info {
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 24px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .amount {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .amount-sub {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .amount-label {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px 24px;
+            border-radius: 12px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            margin-top: 12px;
+        }
+
+        .status {
+            text-align: center;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .status.loading {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .status.success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .status.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(99, 102, 241, 0.3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .step {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border);
+            transition: all 0.3s;
+        }
+
+        .step.active {
+            background: var(--primary);
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        .step.completed {
+            background: var(--success);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .connected-wallet {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .connected-wallet .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+        }
+
+        .connected-wallet .address {
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+        }
+
+        .info-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .features {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .feature {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+        }
+
+        .feature-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .feature-text {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="logo">
+                <h1>Exid VPN</h1>
+                <p>Private Activation</p>
+                <div class="privacy-badge">🔐 Privacy Cash Protected</div>
+            </div>
+
+            <div class="step-indicator">
+                <div class="step" id="step1"></div>
+                <div class="step" id="step2"></div>
+                <div class="step" id="step3"></div>
+                <div class="step" id="step4"></div>
+            </div>
+
+            <!-- Step 1: Connect -->
+            <div id="connect-section">
+                <div class="payment-info">
+                    <div class="amount" id="payment-amount">1 USDC</div>
+                    <div class="amount-sub" id="payment-sol">+ ~0.003 SOL (gas)</div>
+                    <div class="amount-label">One-time private activation</div>
+                </div>
+                <div class="info-box">
+                    <strong>🔒 How it works:</strong><br>
+                    1. Connect your wallet<br>
+                    2. Two quick approvals (setup + payment)<br>
+                    3. Your payment is anonymized via Privacy Cash<br>
+                    No link between your wallet and VPN usage.
+                </div>
+                <button class="btn btn-primary" onclick="connectWallet()">Connect Wallet</button>
+            </div>
+
+            <!-- Step 2: Setup (SOL + ATA) -->
+            <div id="setup-section" class="hidden">
+                <div class="connected-wallet">
+                    <div class="dot"></div>
+                    <div class="address" id="connected-address">Connected</div>
+                </div>
+                <div class="payment-info">
+                    <div class="amount">Step 1/2</div>
+                    <div class="amount-label">Setup burner wallet (~0.005 SOL)</div>
+                </div>
+                <div class="info-box">
+                    This transaction creates a temporary wallet for privacy. Small SOL amount covers gas fees.
+                </div>
+                <button class="btn btn-primary" id="setup-btn" onclick="setupBurner()">
+                    Setup Burner Wallet
+                </button>
+                <button class="btn btn-secondary" onclick="disconnectWallet()">Disconnect</button>
+            </div>
+
+            <!-- Step 3: Pay USDC -->
+            <div id="pay-section" class="hidden">
+                <div class="connected-wallet">
+                    <div class="dot"></div>
+                    <div class="address" id="connected-address-2">Connected</div>
+                </div>
+                <div class="payment-info">
+                    <div class="amount">Step 2/2</div>
+                    <div class="amount-label" id="pay-label">Send 1 USDC</div>
+                </div>
+                <button class="btn btn-primary" id="pay-btn" onclick="payUsdc()">
+                    Send USDC
+                </button>
+            </div>
+
+            <!-- Step 4: Processing -->
+            <div id="processing-section" class="hidden">
+                <div class="status loading">
+                    <div class="spinner"></div>
+                    <p id="processing-status">Processing...</p>
+                </div>
+            </div>
+
+            <!-- Success -->
+            <div id="success-section" class="hidden">
+                <div class="status success">
+                    <div style="font-size: 48px; margin-bottom: 12px;">✓</div>
+                    <h3 style="margin-bottom: 8px;">Activation Complete!</h3>
+                    <p style="color: var(--text-muted); font-size: 14px;">Your VPN is active. Payment was private.</p>
+                </div>
+                <button class="btn btn-primary" onclick="openDesktopApp()">Open Exid VPN</button>
+            </div>
+
+            <!-- Error -->
+            <div id="error-section" class="hidden">
+                <div class="status error">
+                    <div style="font-size: 48px; margin-bottom: 12px;">✕</div>
+                    <h3 style="margin-bottom: 8px;">Failed</h3>
+                    <p id="error-message" style="color: var(--text-muted); font-size: 14px;">Please try again.</p>
+                </div>
+                <button class="btn btn-primary" onclick="retry()">Try Again</button>
+            </div>
+
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">🔒</div>
+                    <div class="feature-text">Private</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-text">Fast</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🛡️</div>
+                    <div class="feature-text">Secure</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Solana Web3 & SPL Token via ESM -->
+    <script type="module">
+        import { PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } from 'https://esm.sh/@solana/web3.js@1.98.0';
+        import { createTransferInstruction, createAssociatedTokenAccountInstruction, getAssociatedTokenAddressSync, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from 'https://esm.sh/@solana/spl-token@0.4.9';
+
+        const API_BASE = window.location.origin;
+        const USDC_MINT = new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
+
+        let paymentInfo = null;
+        let connectedWallet = null;
+        let provider = null;
+        let currentSession = null;
+        let deepLink = null;
+
+        // Expose functions to window
+        window.connectWallet = connectWallet;
+        window.disconnectWallet = disconnectWallet;
+        window.setupBurner = setupBurner;
+        window.payUsdc = payUsdc;
+        window.openDesktopApp = openDesktopApp;
+        window.retry = retry;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            updateStep(1);
+            await fetchPaymentInfo();
+        });
+
+        async function fetchPaymentInfo() {
+            try {
+                const response = await fetch(`${API_BASE}/api/payment-info`);
+                const data = await response.json();
+                if (data.success) {
+                    paymentInfo = data.data;
+                    document.getElementById('payment-amount').textContent = `${paymentInfo.amount_human} USDC`;
+                    document.getElementById('payment-sol').textContent = `+ ~${paymentInfo.burnerSolHuman} SOL (gas)`;
+                }
+            } catch (error) {
+                console.error('Failed to fetch payment info:', error);
+            }
+        }
+
+        async function connectWallet() {
+            // Try Phantom first
+            if (window.solana?.isPhantom) {
+                try {
+                    const resp = await window.solana.connect();
+                    connectedWallet = resp.publicKey.toString();
+                    provider = window.solana;
+                    onWalletConnected();
+                    return;
+                } catch (e) {
+                    console.error('Phantom connect error:', e);
+                }
+            }
+
+            // Try Solflare
+            if (window.solflare) {
+                try {
+                    await window.solflare.connect();
+                    connectedWallet = window.solflare.publicKey.toString();
+                    provider = window.solflare;
+                    onWalletConnected();
+                    return;
+                } catch (e) {
+                    console.error('Solflare connect error:', e);
+                }
+            }
+
+            alert('Please install Phantom or Solflare wallet.');
+        }
+
+        function onWalletConnected() {
+            const shortAddr = connectedWallet.slice(0, 4) + '...' + connectedWallet.slice(-4);
+            document.getElementById('connected-address').textContent = shortAddr;
+            document.getElementById('connected-address-2').textContent = shortAddr;
+            showSection('setup-section');
+            updateStep(2);
+        }
+
+        function disconnectWallet() {
+            if (provider?.disconnect) provider.disconnect();
+            connectedWallet = null;
+            provider = null;
+            currentSession = null;
+            showSection('connect-section');
+            updateStep(1);
+        }
+
+        // Step 2: Setup burner (SOL transfer + create ATA)
+        async function setupBurner() {
+            const btn = document.getElementById('setup-btn');
+            btn.disabled = true;
+            btn.textContent = 'Creating session...';
+
+            try {
+                // Create session on backend
+                const sessionRes = await fetch(`${API_BASE}/api/create-session`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const sessionData = await sessionRes.json();
+
+                if (!sessionData.success) {
+                    throw new Error(sessionData.error || 'Failed to create session');
+                }
+
+                currentSession = sessionData;
+                console.log('Session created:', sessionData.sessionId);
+                console.log('Burner address:', sessionData.burnerAddress);
+                console.log('Burner ATA:', sessionData.burnerATA);
+
+                btn.textContent = 'Approve in wallet...';
+
+                // Build transaction: SOL transfer + create ATA
+                const fromPubkey = new PublicKey(connectedWallet);
+                const burnerPubkey = new PublicKey(sessionData.burnerAddress);
+                const burnerATA = new PublicKey(sessionData.burnerATA);
+
+                // Get blockhash
+                const bhRes = await fetch(`${API_BASE}/api/blockhash`);
+                const bhData = await bhRes.json();
+                if (!bhData.success) throw new Error('Failed to get blockhash');
+
+                const transaction = new Transaction();
+
+                // 1. Transfer SOL to burner for gas
+                transaction.add(
+                    SystemProgram.transfer({
+                        fromPubkey,
+                        toPubkey: burnerPubkey,
+                        lamports: sessionData.solRequired
+                    })
+                );
+
+                // 2. Create burner's USDC ATA (user pays rent)
+                transaction.add(
+                    createAssociatedTokenAccountInstruction(
+                        fromPubkey,      // payer
+                        burnerATA,       // ata
+                        burnerPubkey,    // owner
+                        USDC_MINT,       // mint
+                        TOKEN_PROGRAM_ID,
+                        ASSOCIATED_TOKEN_PROGRAM_ID
+                    )
+                );
+
+                transaction.recentBlockhash = bhData.blockhash;
+                transaction.feePayer = fromPubkey;
+
+                // Sign with wallet
+                let signedTx;
+                if (provider.signTransaction) {
+                    signedTx = await provider.signTransaction(transaction);
+                } else {
+                    throw new Error('Wallet does not support signing');
+                }
+
+                btn.textContent = 'Sending...';
+
+                // Send transaction
+                const serializedTx = signedTx.serialize();
+                const sendRes = await fetch(`${API_BASE}/api/send-transaction`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ signedTransaction: Array.from(serializedTx) })
+                });
+
+                const sendData = await sendRes.json();
+                if (!sendData.success) {
+                    throw new Error(sendData.error || 'Failed to send transaction');
+                }
+
+                console.log('Setup transaction sent:', sendData.signature);
+                currentSession.setupTxSignature = sendData.signature;
+
+                // Wait a bit for confirmation
+                btn.textContent = 'Confirming...';
+                await new Promise(r => setTimeout(r, 3000));
+
+                // Move to USDC payment step
+                document.getElementById('pay-label').textContent = `Send ${paymentInfo.amount_human} USDC`;
+                showSection('pay-section');
+                updateStep(3);
+
+            } catch (error) {
+                console.error('Setup failed:', error);
+                document.getElementById('error-message').textContent = error.message;
+                showSection('error-section');
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Setup Burner Wallet';
+        }
+
+        // Step 3: Pay USDC
+        async function payUsdc() {
+            const btn = document.getElementById('pay-btn');
+            btn.disabled = true;
+            btn.textContent = 'Preparing...';
+
+            try {
+                const fromPubkey = new PublicKey(connectedWallet);
+                const fromATA = getAssociatedTokenAddressSync(USDC_MINT, fromPubkey);
+                const toATA = new PublicKey(currentSession.burnerATA);
+
+                // Get blockhash
+                const bhRes = await fetch(`${API_BASE}/api/blockhash`);
+                const bhData = await bhRes.json();
+                if (!bhData.success) throw new Error('Failed to get blockhash');
+
+                const transaction = new Transaction();
+                transaction.add(
+                    createTransferInstruction(
+                        fromATA,
+                        toATA,
+                        fromPubkey,
+                        BigInt(paymentInfo.amount)
+                    )
+                );
+
+                transaction.recentBlockhash = bhData.blockhash;
+                transaction.feePayer = fromPubkey;
+
+                btn.textContent = 'Approve in wallet...';
+
+                // Sign with wallet
+                let signedTx;
+                if (provider.signTransaction) {
+                    signedTx = await provider.signTransaction(transaction);
+                } else {
+                    throw new Error('Wallet does not support signing');
+                }
+
+                btn.textContent = 'Sending...';
+
+                // Send transaction
+                const serializedTx = signedTx.serialize();
+                const sendRes = await fetch(`${API_BASE}/api/send-transaction`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ signedTransaction: Array.from(serializedTx) })
+                });
+
+                const sendData = await sendRes.json();
+                if (!sendData.success) {
+                    throw new Error(sendData.error || 'Failed to send transaction');
+                }
+
+                console.log('USDC transaction sent:', sendData.signature);
+
+                // Show processing and execute privacy transaction
+                showSection('processing-section');
+                updateStep(4);
+                setStatus('Waiting for confirmation...');
+
+                // Execute privacy transaction on backend
+                setStatus('Anonymizing payment via Privacy Cash...');
+
+                const execRes = await fetch(`${API_BASE}/api/execute-privacy-transaction`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: currentSession.sessionId,
+                        fundingTxSignature: sendData.signature
+                    })
+                });
+
+                const execData = await execRes.json();
+
+                if (execData.success) {
+                    deepLink = execData.deep_link;
+                    showSection('success-section');
+                } else {
+                    throw new Error(execData.error || 'Privacy transaction failed');
+                }
+
+            } catch (error) {
+                console.error('Payment failed:', error);
+                document.getElementById('error-message').textContent = error.message;
+                showSection('error-section');
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Send USDC';
+        }
+
+        function setStatus(text) {
+            document.getElementById('processing-status').textContent = text;
+        }
+
+        function openDesktopApp() {
+            if (deepLink) window.location.href = deepLink;
+        }
+
+        function retry() {
+            currentSession = null;
+            if (connectedWallet) {
+                showSection('setup-section');
+                updateStep(2);
+            } else {
+                showSection('connect-section');
+                updateStep(1);
+            }
+        }
+
+        function showSection(id) {
+            ['connect-section', 'setup-section', 'pay-section', 'processing-section', 'success-section', 'error-section']
+                .forEach(s => document.getElementById(s).classList.toggle('hidden', s !== id));
+        }
+
+        function updateStep(step) {
+            for (let i = 1; i <= 4; i++) {
+                const el = document.getElementById(`step${i}`);
+                el.classList.remove('active', 'completed');
+                if (i < step) el.classList.add('completed');
+                else if (i === step) el.classList.add('active');
+            }
+        }
+    </script>
+</body>
+
+</html>
