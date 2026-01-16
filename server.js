@@ -206,7 +206,7 @@ app.post('/api/execute-privacy-transaction', async (req, res) => {
         console.log('Depositing USDC to Privacy Pool...');
         const depositResult = await client.depositSPL({
             amount: PAYMENT_AMOUNT / 1_000_000,
-            mintAddress: USDC_MINT
+            mintAddress: USDC_MINT.toString()
         });
         console.log('Deposit successful:', depositResult.signature);
 
@@ -216,7 +216,7 @@ app.post('/api/execute-privacy-transaction', async (req, res) => {
         // Withdraw from Privacy Pool to Payment Wallet
         console.log(`Withdrawing to payment wallet: ${PAYMENT_WALLET}`);
         const withdrawResult = await client.withdrawSPL({
-            mintAddress: USDC_MINT,
+            mintAddress: USDC_MINT.toString(),
             amount: PAYMENT_AMOUNT / 1_000_000,
             recipientAddress: PAYMENT_WALLET
         });
